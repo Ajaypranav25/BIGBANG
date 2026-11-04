@@ -1,0 +1,156 @@
+/* =====================================================================
+   Landing page — liquid glass over the live 3D scene.
+   Strict grayscale (every variable is a 0 0% X% HSL value); Poppins for
+   display/body, Source Serif 4 only for italic emphasis inside headings.
+   ===================================================================== */
+
+.landing {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --muted: 0 0% 60%;
+  --glass-fill: 0 0% 100%;
+  --radius: 1rem;
+  --font-display: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Source Serif 4', ui-serif, Georgia, serif;
+
+  position: fixed; inset: 0; z-index: 10;
+  display: flex; min-height: 100vh;
+  color: hsl(var(--foreground));
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+  pointer-events: none; /* empty areas let drags reach the 3D scene behind */
+  animation: landing-in .9s ease-out both;
+}
+.landing h1, .landing h2, .landing h3 { font-family: var(--font-display); font-weight: 500; letter-spacing: normal; }
+.landing h1 em, .landing h1 i, .landing h2 em, .landing h3 em, .landing .italic {
+  font-family: var(--font-serif); font-style: italic; font-weight: 400;
+}
+.landing button { font-family: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
+.lg-hover { transition: transform .2s ease; }
+.lg-hover:hover { transform: scale(1.05); }
+.lg-hover:active { transform: scale(.95); }
+@keyframes landing-in { from { opacity: 0; } }
+
+/* ---------------------------------------------------------------- liquid glass
+   No CSS blur and no painted borders: these classes only mark the shapes. The refraction,
+   dispersion and specular rim are rendered for real in WebGL by LiquidGlassEffect
+   (src/scenes/liquidGlass.ts), which reads every .liquid-glass / .liquid-glass-strong
+   element's rounded rectangle each frame and bends the live scene through it. */
+@layer components {
+  .liquid-glass,
+  .liquid-glass-strong {
+    background: transparent;
+    border: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .liquid-glass-strong { box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.05); }
+}
+
+/* ---------------------------------------------------------------- left panel */
+.landing-left {
+  position: relative; width: 52%;
+  display: flex; flex-direction: column;
+  padding: 40px 44px 36px;
+  pointer-events: auto;
+}
+.landing-left-glass { position: absolute; inset: 16px; border-radius: 1.5rem; z-index: 0; }
+.landing-left > :not(.landing-left-glass) { position: relative; z-index: 1; }
+
+.landing-nav { display: flex; align-items: center; justify-content: space-between; }
+.landing-logo { display: flex; align-items: center; gap: 10px; color: hsl(var(--foreground)); text-decoration: none; }
+.landing-logo span { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.05em; line-height: 1; }
+.landing-menu { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px; font-size: .875rem; }
+
+.landing-hero {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; gap: 22px; padding: 24px 0;
+}
+.landing-hero h1 {
+  margin: 0; font-size: 3.75rem; line-height: 1.02; letter-spacing: -0.05em; color: hsl(var(--foreground));
+}
+.landing-hero h1 em { color: rgba(255, 255, 255, 0.8); letter-spacing: -0.03em; }
+.landing-lede { max-width: 30rem; margin: 0; font-size: .95rem; line-height: 1.6; color: rgba(255, 255, 255, 0.6); }
+.landing-cta {
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: 8px 8px 8px 24px; border-radius: 999px; font-size: 1rem; font-weight: 500;
+}
+.landing-cta-icon { width: 28px; height: 28px; border-radius: 50%; background: rgba(255, 255, 255, 0.15); display: inline-flex; align-items: center; justify-content: center; }
+.landing-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.landing-pill { padding: 6px 14px; border-radius: 999px; font-size: .75rem; color: rgba(255, 255, 255, 0.8); }
+
+.landing-quote { margin: 0; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.landing-quote-label { font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: rgba(255, 255, 255, 0.5); }
+.landing-quote blockquote { margin: 0; font-size: 1.5rem; font-weight: 400; letter-spacing: -0.02em; color: hsl(var(--foreground)); }
+.landing-quote blockquote em { font-family: var(--font-serif); font-style: italic; color: rgba(255, 255, 255, 0.8); }
+.landing-author { display: flex; align-items: center; gap: 12px; font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: rgba(255, 255, 255, 0.6); }
+.landing-rule { width: 32px; height: 1px; background: rgba(255, 255, 255, 0.3); }
+
+/* ---------------------------------------------------------------- right panel (desktop) */
+.landing-right {
+  width: 48%; display: none; flex-direction: column; gap: 16px;
+  padding: 24px 24px 24px 8px;
+}
+.landing-right > * { pointer-events: auto; }
+.landing-topbar { display: flex; justify-content: space-between; align-items: center; }
+.landing-sources { display: inline-flex; align-items: center; gap: 16px; padding: 10px 18px; border-radius: 999px; color: hsl(var(--foreground)); transition: transform .2s ease, color .2s ease; }
+.landing-sources:hover { color: rgba(255, 255, 255, 0.8); }
+.landing-account { display: inline-flex; align-items: center; gap: 10px; padding: 5px 16px 5px 5px; border-radius: 999px; font-size: .875rem; }
+.landing-icon-wrap { width: 32px; height: 32px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); display: inline-flex; align-items: center; justify-content: center; flex: none; }
+
+.landing-community {
+  align-self: flex-end; width: 14rem; padding: 16px 18px; border-radius: var(--radius); text-align: left;
+}
+.landing-community h3 { margin: 0 0 4px; font-size: .95rem; }
+.landing-community p { margin: 0; font-size: .75rem; line-height: 1.5; color: rgba(255, 255, 255, 0.6); }
+
+.landing-features { margin-top: auto; padding: 16px; border-radius: 2.5rem; display: flex; flex-direction: column; gap: 16px; }
+.landing-feature-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.landing-feature { padding: 20px; border-radius: 1.5rem; }
+.landing-feature h3 { margin: 14px 0 4px; font-size: .95rem; }
+.landing-feature p { margin: 0; font-size: .75rem; line-height: 1.5; color: rgba(255, 255, 255, 0.6); }
+.landing-feature-wide { display: flex; align-items: center; gap: 16px; padding: 12px; border-radius: 1.5rem; }
+.landing-thumb {
+  width: 96px; height: 64px; border-radius: 1rem; flex: none;
+  /* Pangaea (250 Ma): atlas cell 25 → column 1, row 3 of the 8×8 GPlates frame atlas */
+  background: #000 url('/textures/paleo-atlas.jpg') no-repeat;
+  background-size: 1024px 512px;
+  background-position: -144px -192px;
+  filter: grayscale(1) contrast(1.1);
+}
+.landing-feature-text { min-width: 0; flex: 1; }
+.landing-feature-text h3 { margin: 0 0 3px; font-size: .95rem; }
+.landing-feature-text p { margin: 0; font-size: .75rem; line-height: 1.5; color: rgba(255, 255, 255, 0.6); }
+.landing-plus { width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+
+/* ---------------------------------------------------------------- responsive */
+@media (min-width: 1024px) {
+  .landing-left-glass { inset: 24px; }
+  .landing-left { padding: 48px 56px 44px; }
+  .landing-hero h1 { font-size: 4.5rem; }
+  .landing-right { display: flex; }
+}
+@media (max-width: 1023px) {
+  .landing-left { width: 100%; overflow-y: auto; overscroll-behavior: contain; }
+}
+@media (max-width: 640px) {
+  .landing-left { padding: 30px 26px 26px; }
+  .landing-left-glass { inset: 10px; border-radius: 1.75rem; }
+  .landing-logo span { font-size: 1.3rem; }
+  .landing-hero { gap: 16px; padding: 12px 0; }
+  .landing-hero .origins-mark { width: 52px; height: 52px; }
+  .landing-hero h1 { font-size: 2.6rem; line-height: 1.04; }
+  .landing-lede { font-size: .85rem; line-height: 1.55; }
+  .landing-cta { font-size: .95rem; }
+  .landing-quote { gap: 6px; }
+  .landing-quote blockquote { font-size: 1.15rem; }
+}
+@media (max-height: 760px) {
+  .landing-hero { gap: 16px; }
+  .landing-hero .origins-mark { width: 56px; height: 56px; }
+  .landing-lede { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing { animation: none; }
+  .lg-hover, .lg-hover:hover, .lg-hover:active { transform: none; }
+}
