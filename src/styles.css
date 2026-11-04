@@ -1,0 +1,214 @@
+/* =====================================================================
+   Origins — overlay layout on top of the Queue-Management design system
+   (src/design/app.css, copied verbatim). This file only positions the
+   floating chrome over the 3D stage and adds the few pieces the design
+   system does not have (time dial, globe pins, veils). Every colour,
+   radius, font, shadow and material comes from the system's tokens.
+   The camera frames each shot inside the space this chrome leaves free
+   (see src/ui/safeArea.ts), so keep the chrome compact.
+   ===================================================================== */
+
+html, body, #root { height: 100%; }
+body { overflow: hidden; overscroll-behavior: none; touch-action: none; background: #000; }
+sup { font-size: .62em; line-height: 0; vertical-align: .62em; margin-left: .04em; }
+
+.stage { position: fixed !important; inset: 0; cursor: grab; }
+.stage:active { cursor: grabbing; }
+
+/* ---------------------------------------------------------------- overlay shell */
+.ui {
+  position: fixed; inset: 0; pointer-events: none; z-index: 8; /* above the scene-cut veils */
+  opacity: 0; transition: opacity 1.2s ease .3s;
+}
+.ui--live { opacity: 1; }
+.ui > * { pointer-events: auto; transition: opacity .35s ease; }
+.ui .chapter-card, .ui .feed, .ui .rotate-hint { pointer-events: none; }
+
+/* immersive: all chrome fades away; one button brings it back */
+.ui--immersive > * { opacity: 0 !important; pointer-events: none !important; }
+.show-chrome { position: fixed; right: 12px; top: 12px; z-index: 20; animation: fade .3s ease-out; }
+
+/* top bar: two compact glass pills (the system's .topbar material) so the middle stays open */
+.topbar-wrap {
+  position: absolute; top: 12px; left: 12px; right: 12px;
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
+  pointer-events: none !important;
+}
+.topbar-wrap > * { pointer-events: auto; }
+.ui .topbar { position: static; border-radius: 999px; gap: 10px; }
+.ui .brand-pill { padding: 5px 16px 5px 5px; min-width: 0; justify-content: flex-start; }
+.ui .brand-pill .brand-logo { width: 32px; height: 32px; display: grid; place-items: center; color: var(--label); flex: none; }
+.brand-text { min-width: 0; }
+.ui .brand-pill .brand-name { font-size: 13.5px; }
+.ui .brand-pill .brand-sub { color: var(--label-3); font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ui .actions-pill { padding: 5px; gap: 4px; }
+.ui .actions-pill .icon-btn { width: 32px; height: 32px; }
+.ui .actions-pill .live-pill { padding: 5px 10px; }
+
+/* ---------------------------------------------------------------- chapter card */
+.chapter-card {
+  position: absolute; left: 12px; top: 64px; width: min(400px, calc(100vw - 24px));
+  opacity: 0; will-change: opacity, transform;
+}
+.chapter-card .card-head { padding-bottom: 6px; }
+.chapter-title {
+  font-family: var(--font-display); font-size: clamp(26px, 2.8vw, 36px); font-weight: 700;
+  letter-spacing: -.03em; line-height: 1.05; margin-bottom: 10px;
+}
+.chapter-narration { color: var(--label-2); font-size: 13.5px; line-height: 1.5; }
+
+/* ---------------------------------------------------------------- event feed */
+.feed {
+  position: absolute; right: 12px; top: 64px; bottom: 150px; width: min(330px, 30vw);
+  display: flex; flex-direction: column; justify-content: flex-end; gap: 8px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 32px);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 32px);
+}
+.feed .event { flex-shrink: 0; padding: 12px 14px 11px; animation: rise .35s cubic-bezier(.2, .9, .3, 1.2) both; }
+.feed .event-mini { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 999px; opacity: .9; }
+.event-mini-title { flex: 1; min-width: 0; font-weight: 600; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.event-top { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.event h3 { margin-bottom: 4px; }
+.event-headline h3 { font-size: 17px; font-weight: 700; }
+.event-summary { color: var(--label-2); font-size: 12.5px; line-height: 1.45; margin-bottom: 6px; }
+.event-foot { display: flex; flex-wrap: wrap; gap: 2px 12px; }
+.event-foot cite { font-style: normal; }
+.event-place { gap: 4px; flex-wrap: nowrap; }
+@media (max-height: 760px) { .feed .event-mini:not(:nth-last-child(2)) { display: none; } }
+
+/* semantic tones (the system reserves colour for meaning) */
+.badge.tone-red { background: var(--tint-red); color: var(--red-text); }
+.badge.tone-green { background: var(--tint-green); color: var(--green-text); }
+.badge.tone-orange { background: var(--tint-orange); color: var(--orange-text); }
+
+/* ---------------------------------------------------------------- bottom HUD (compact) */
+.ui .hud {
+  position: absolute; left: 12px; right: 12px; bottom: 12px;
+  padding: 10px 16px 6px; overflow: visible;
+}
+.hud-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 4px; }
+.hud-when { min-width: 0; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.hud-time {
+  font-family: var(--rounded); font-size: clamp(20px, 2vw, 26px); font-weight: 700;
+  letter-spacing: -.02em; line-height: 1.15; min-height: 1.15em; white-space: nowrap;
+}
+.hud-sub { display: flex; align-items: center; gap: 5px; color: var(--label-3); font-size: 12px; white-space: nowrap; }
+.hud-stats { display: flex; gap: 6px; flex-wrap: nowrap; }
+/* same recipe as the system's .widget .stat, at a smaller size */
+.hud-stats .stat { background: var(--fill); border-radius: 12px; padding: 4px 10px; min-width: 0; }
+.hud-stats .stat .v { font-family: var(--rounded); font-weight: 700; font-size: 13.5px; font-variant-numeric: tabular-nums; white-space: nowrap; line-height: 1.3; }
+.hud-stats .stat .k { font-size: 10.5px; color: var(--label-3); font-weight: 500; white-space: nowrap; line-height: 1.2; }
+
+/* ---------------------------------------------------------------- time dial */
+.dial { position: relative; height: 32px; cursor: ew-resize; touch-action: none; user-select: none; }
+.dial-chapters { position: absolute; inset: 0 0 auto 0; height: 12px; }
+.dial-chapter {
+  position: absolute; top: 0; height: 12px; border-left: .5px solid var(--separator);
+  padding-left: 4px; overflow: hidden; white-space: nowrap;
+  font-size: 9.5px; font-weight: 600; color: var(--label-3); line-height: 12px;
+}
+.dial-chapter:hover { color: var(--label); }
+.dial-geo { position: absolute; left: 0; right: 0; top: 15px; height: 2px; border-radius: 2px; overflow: hidden; }
+.dial-period { position: absolute; top: 0; height: 100%; }
+/* the system's .hbar track/fill */
+.dial-track { position: absolute; left: 0; right: 0; top: 21px; height: 6px; border-radius: 6px; background: var(--fill); }
+.dial-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; background: var(--bar); }
+.dial-event { position: absolute; top: 1.5px; width: 3px; height: 3px; margin-left: -1.5px; border-radius: 50%; background: var(--label-3); }
+.dial-thumb {
+  position: absolute; top: 17px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%;
+  background: #fff; box-shadow: 0 0 0 .5px rgba(0, 0, 0, .12), 0 3px 8px rgba(0, 0, 0, .25);
+}
+.dial:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 8px; }
+
+/* ---------------------------------------------------------------- globe pins */
+.pin {
+  display: inline-flex; align-items: center; gap: 6px; transform: translateX(50%);
+  padding: 4px 10px 4px 7px; border-radius: 999px; white-space: nowrap; pointer-events: none;
+  background: var(--glass-strong); border: 1px solid var(--glass-edge);
+  -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+  box-shadow: inset 0 1px 0 var(--glass-rim), var(--shadow);
+  font-size: 11.5px; font-weight: 600; color: var(--label);
+  animation: rise .3s cubic-bezier(.2, .9, .3, 1.2) both;
+}
+.pin-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+.pin.tone-red .pin-dot { background: var(--red); }
+.pin-when { color: var(--label-3); font-weight: 500; }
+
+/* ---------------------------------------------------------------- 360° hint */
+.rotate-hint {
+  position: absolute; left: 50%; bottom: 128px; transform: translateX(-50%);
+  width: max-content; max-width: calc(100vw - 24px); opacity: 0; animation: none;
+}
+
+/* ---------------------------------------------------------------- veils */
+.veil { position: fixed; inset: 0; pointer-events: none; opacity: 0; }
+.veil-black { background: #000; z-index: 5; }
+.veil-white { background: radial-gradient(circle at 50% 50%, #fff, #fff 55%, #f5f5f7); mix-blend-mode: screen; z-index: 6; }
+
+/* ---------------------------------------------------------------- intro (the system's .auth lock screen) */
+.intro {
+  position: fixed; inset: 0; z-index: 40; min-height: 0;
+  background: color-mix(in srgb, var(--bg) 42%, transparent);
+  -webkit-backdrop-filter: blur(3px) saturate(120%); backdrop-filter: blur(3px) saturate(120%);
+  animation: fade .8s ease-out both; overflow-y: auto;
+}
+.intro .auth-clock .time { font-size: clamp(54px, 9vw, 84px); }
+.intro .auth-card { margin: 0 auto; }
+.intro .auth-head .brand-mark { display: grid; }
+
+/* ---------------------------------------------------------------- end card */
+.endcard { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+.endcard-card {
+  position: absolute; left: 50%; top: 24%; transform: translate(-50%, -50%);
+  width: min(520px, calc(100vw - 24px)); padding: 22px 26px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.endcard-card h1 { font-size: clamp(34px, 4vw, 48px); letter-spacing: -.03em; }
+.endcard-card p { color: var(--label-2); }
+.endcard-again { position: absolute; left: 50%; top: 66%; transform: translateX(-50%); }
+.endcard-again:active { transform: translateX(-50%) scale(.97); }
+
+/* ---------------------------------------------------------------- modal content */
+.modal { width: min(640px, 100%); }
+.chapter-list { padding: 0; }
+.about ul { margin: 0; padding-left: 18px; color: var(--label-2); display: flex; flex-direction: column; gap: 4px; }
+.about h3 { margin-top: 4px; }
+.about p { color: var(--label-2); }
+
+/* ---------------------------------------------------------------- narrower screens */
+@media (max-width: 1100px) {
+  .hud-stats .stat:nth-child(n + 4) { display: none; }
+}
+@media (max-width: 860px) {
+  .topbar-wrap { top: 8px; left: 8px; right: 8px; }
+  .ui .actions-pill .live-pill, .ui .brand-pill .brand-sub { display: none; }
+  .chapter-card { top: 56px; left: 8px; }
+  .chapter-narration { display: none; }
+  .feed { left: 8px; right: 8px; width: auto; top: auto; bottom: 120px; max-height: 34vh; }
+  .feed .event-mini { display: none; }
+  .ui .hud { left: 8px; right: 8px; bottom: 8px; padding: 8px 12px 4px; }
+  .hud-row { flex-wrap: wrap; }
+  .hud-stats .stat:nth-child(n + 3) { display: none; }
+  .hud-sub { display: none; }
+  .dial-chapter span { display: none; }
+  .rotate-hint { bottom: 118px; }
+}
+@media (max-width: 640px) {
+  .ui .actions-pill .btn-label { display: none; }
+  .ui .actions-pill .autopilot-btn { width: 32px; height: 32px; padding: 0; }
+  .feed .event-summary { display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .feed .event-foot cite { display: none; }
+  .pin { max-width: 44vw; }
+  .pin-name { overflow: hidden; text-overflow: ellipsis; }
+  .pin-when { display: none; }
+  .rotate-hint { bottom: auto; top: 58px; }
+}
+@media (max-width: 420px) {
+  .ui .brand-pill { padding-right: 5px; }
+  .ui .brand-pill .brand-text { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .feed .event, .pin, .intro { animation: none; }
+  .pin-dot { animation: none; }
+}
