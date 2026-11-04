@@ -1,0 +1,9 @@
+# never upload local credentials or caches
+.env*
+.cache
+node_modules
+dist
+coverage
+*.tsbuildinfo
+# Blender source files are not needed to build the site
+assets/blender
